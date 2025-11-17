@@ -40,7 +40,7 @@ If you want me to add Prominence II (Hasturian Era v3.1.11), attach the ZIP or p
 
 ## Prominence II — Hasturian Era v3.9.6 (modpack)
 
-- Raw ZIP (hosted): https://raw.githubusercontent.com/rjrivers1/eaglerforge.github.io/main/docs/.vitepress/public/mods/prominence2-v3.9.6.zip
+- Raw ZIP (hosted): https://raw.githubusercontent.com/rjrivers1/eaglerforge.github.io/main/docs/.vitepress/public/mods/docs/.vitepress/public/mods/prominence2-v3.9.6.zip
 - Source / original download: https://www.curseforge.com/minecraft/modpacks/prominence-2-hasturian-era
 
 Note: This is a Forge modpack (mods + overrides). The web EaglerForge client cannot run Forge modpacks; download this zip to use with the CurseForge/MultiMC launcher or to extract mods for server-side usage.
