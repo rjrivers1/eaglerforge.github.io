@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>local.convert</groupId>
+  <artifactId>jar-to-js</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <!-- Tune TeaVM version as needed -->
+    <teavm.version>0.7.0</teavm.version>
+  </properties>
+
+  <dependencies>
+    <!-- Add dependency on the installed local jar. Replace group/artifact/version if you installed differently. -->
+    <dependency>
+      <groupId>local.convert</groupId>
+      <artifactId>input-jar</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.teavm</groupId>
+        <artifactId>teavm-maven-plugin</artifactId>
+        <version>${teavm.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- A reachable main class that triggers library initialization. You must set this when running the script. -->
+          <mainClass>${teavm.mainClass}</mainClass>
+          <targetFile>${project.build.directory}/classes/app.js</targetFile>
+          <minifying>true</minifying>
+          <obfuscated>false</obfuscated>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
