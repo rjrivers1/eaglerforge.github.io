@@ -9,6 +9,21 @@ This page lists community-provided mods and resource packs that can be loaded in
 ## Available Mods
 
 - **Chat Utils (Fixed)** — a patched chat utility script with robust runtime checks and optional audio playback.
+   - **Storage fallback (ml::Mods)** — a small script that migrates large mod data from localStorage to IndexedDB and prevents QuotaExceededError on the launcher.
+     - Raw JS: https://raw.githubusercontent.com/rjrivers1/eaglerforge.github.io/main/docs/.vitepress/public/mods/ml-mods-indexeddb-fallback.js
+     - How to load (Console):
+
+  ```javascript
+  (async () => {
+    const url = 'https://raw.githubusercontent.com/rjrivers1/eaglerforge.github.io/main/docs/.vitepress/public/mods/ml-mods-indexeddb-fallback.js';
+    const s = document.createElement('script');
+    s.crossOrigin = 'anonymous';
+    s.src = url;
+    document.head.appendChild(s);
+    console.log('Injected ml-mods-indexeddb-fallback.js from', url);
+  })();
+  ```
+
   - Raw JS: https://raw.githubusercontent.com/rjrivers1/eaglerforge.github.io/main/docs/.vitepress/public/mods/chat-utils-fixed.js
   - ZIP: https://raw.githubusercontent.com/rjrivers1/eaglerforge.github.io/main/docs/.vitepress/public/mods/chat-utils-fixed.zip
   - How to load: Use AmplerLauncher → `Add External Mod` and paste the Raw JS link, or open DevTools Console and run:
