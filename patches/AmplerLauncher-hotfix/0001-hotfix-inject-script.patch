@@ -1,0 +1,7 @@
+*** Begin Patch
+*** Add File: index.html + injection
+@@
++<!-- Hotfix: inject ml-mods-indexeddb-fallback early to migrate ml::Mods and intercept large writes -->
++<script src="/mods/ml-mods-indexeddb-fallback.js" crossorigin="anonymous"></script>
++
+*** End Patch

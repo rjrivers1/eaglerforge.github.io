@@ -1,0 +1,82 @@
+*** Begin Patch
+*** Update File: ModGUI.js
+@@
+-    // Old code: write entire mod object into localStorage
+-    localStorage.setItem('ml::Mods', JSON.stringify(mods));
++    // New code: store large binaries in IndexedDB and small metadata in localStorage
++    await saveMods(mods);
+@@
++// Insert these helper functions near the top of ModGUI.js
++async function openDB() {
++  return new Promise((resolve, reject) => {
++    const req = indexedDB.open('eagler-mods', 1);
++    req.onupgradeneeded = e => {
++      const db = e.target.result;
++      if (!db.objectStoreNames.contains('mods')) db.createObjectStore('mods', { keyPath: 'id', autoIncrement: true });
++    };
++    req.onsuccess = e => resolve(e.target.result);
++    req.onerror = e => reject(e.target.error);
++  });
++}
++
++async function storeBlob(meta, blob) {
++  const db = await openDB();
++  return new Promise((resolve, reject) => {
++    const tx = db.transaction('mods', 'readwrite');
++    const store = tx.objectStore('mods');
++    const req = store.add({ meta, blob });
++    req.onsuccess = e => resolve(e.target.result);
++    req.onerror = e => reject(e.target.error);
++  });
++}
++
++async function getBlobById(id){
++  const db = await openDB();
++  return new Promise((resolve, reject) => {
++    const req = db.transaction('mods').objectStore('mods').get(id);
++    req.onsuccess = e => resolve(e.target.result ? e.target.result.blob : null);
++    req.onerror = e => reject(e.target.error);
++  });
++}
++
++async function saveMods(mods) {
++  const SAFE_THRESHOLD = 1024 * 1024 * 1; // 1MB
++  const safeList = [];
++  for (const m of mods) {
++    const entry = { name: m.name, fileName: m.fileName, size: m.size };
++    if (m.blob && m.blob.size > SAFE_THRESHOLD) {
++      try {
++        const id = await storeBlob({ name: m.name, fileName: m.fileName }, m.blob);
++        entry.blobId = id;
++      } catch (err) {
++        // fallback: remove blob from payload
++        entry.fallback = true;
++      }
++    } else if (m.blob) {
++      // small payload: keep in localStorage as base64 string
++      if (typeof m.blob === 'object' && m.blob instanceof Blob) {
++        entry.base64 = await blobToBase64(m.blob);
++      } else {
++        entry.base64 = m.blob;
++      }
++    }
++    safeList.push(entry);
++  }
++  try {
++    localStorage.setItem('ml::Mods', JSON.stringify(safeList));
++  } catch (e) {
++    console.warn('localStorage.setItem still failed for ml::Mods; saving minimal metadata', e);
++    const minimal = safeList.map(s => ({ name: s.name, fileName: s.fileName, size: s.size, blobId: s.blobId }));
++    localStorage.setItem('ml::Mods', JSON.stringify(minimal));
++  }
++}
++
++function blobToBase64(blob){
++  return new Promise((resolve, reject) => {
++    const reader = new FileReader();
++    reader.onload = () => resolve(reader.result);
++    reader.onerror = reject;
++    reader.readAsDataURL(blob);
++  });
++}
+*** End Patch
